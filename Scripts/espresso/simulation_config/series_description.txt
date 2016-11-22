@@ -1,0 +1,285 @@
+series01:
+first try with reduced parameter space
+
+series02_comp:
+second try of failed or timeout simulations
+
+series02_equil2:
+continue selected simulation from series01 for further equilibration (long chains, low densities)
+
+-> all scripts from above runs are contained in ~/slurm_series01-1 and ~slurm_series01-2
+
+ROD_series01:
+fixed rod for N=80, rho=0.0005, lB=[0.1, 1.0, 3.0, 7.0], dist=[1, 2, 3], sclen=[0, 1, 2, 3], box_l_xy = (b*rho)**-0.5, box_l_z = N*b
+...-equil: equilibration simulation with t_max = 5000
+...-measure: main simulation for additional 10000 time units (t_max is a little higher because of missing calculateCIdistribution flag in the first runs -> first runs cancelled, resumed with correct flag from checkpoint)
+-> CIdistribution of ROD_series01 runs should not be evaluated for sclen>0 (wrong particle type(=type_nM and type_cM instead of type_nSM and type_cSM) of sidechains lead to wrong P(r) calculation
+
+ROD2_series01:
+fixed rod for N=80, rho=0.005, lB=[0.1, 1.0, 3.0, 7.0], dist=[1, 2, 3], sclen=[0, 1, 2, 3], box_l_xy = (b*rho)**-0.5, box_l_z = N*b
+(distribution_iteration_interval=10, distr_log_flag = 1, distr_bins = 500)
+...-equil: equilibration simulation with t_max = 5000
+...-measure: main simulation for additional 15000 time units
+
+ROD2_series02:
+continuation of ROD2_series01-measure for additional 55000 time units (better statistics for counter ion distribution)
+
+ROD3_series01:
+fixed rod for N=80, rho=0.005, lB=[0.1, 1.0, 3.0, 7.0], dist=[1, 2, 3], sclen=[0, 1, 2, 3], box_l_xy = box_l_xy = (b*rho)**-0.5, box_l_z = N*b
+(distribution_iteration_interval=1, distr_log_flag = 0, distr_bins = 100)
+...-equil: equilibration simulation with t_max = 5000
+...-measure: main simulation for additional 10000 time units
+
+ROD3_series02 (measure):
+continuation of ROD3_series01-measure for additional 30000 time units
+
+ROD3_series03 (measure):
+continuation of ROD3_series02-measure for additional 30000 time units
+
+ROD3_series04 (measure):
+continuation of ROD3_series03-measure for additional 30000 time units
+
+Re_N_series01:
+analyzation of end-to-end distance for N=10,20,30,40,50,60,70,80,90,100 dt=0.01, shield=0.1 sigma (default for all previous simulations) Tmax=15000, rho=0.005, lB=0.1, 1, 3, 7 dist=1,2,3 sclen=0,1,2,3
+
+Re_N_series01-failed:
+restarted failed simulation runs from Re_N_series01 with shield=0.6*sigma and adjusted warmup:
+warmup_dt=0.0001, warmup_steps_per_iteration=10000
+
+Re_N_series02, 03 and 04:
+continuation of previous runs for lB=7, dist=1, sclen=0,1,2,3 and additional 15000 time units (each series) for better end-to-end statistics (better agreement with flory eponents for dpg poster plots)
+
+Re_N_dt0.005_series01:
+similar to Re_N_series01 except dt=0.005, shield=0.3 sigma (avoid broken bonds errors of Re_N_series01)
+(failed runs restarted with higher shield value eg 0.5 and 0.6)
+
+StruFac_series01-warmup:
+equilibration runs for Tmax = 5000, N=80, lB=7, dist=1, sclen=0,1,2,3, rho=0.005
+
+StruFac_series01-measure:
+measurement runs for additional 15000 time units of -warmup runs in order to calculate formfactor and (which is at the moment not of interest but computationally cheap) the integrated CI distribution every 10 iterations
+
+2016-03-23: copy all Re_N*, Strufac*, ROD3* vtf coordinates to /auto.icpopene/data/aweyman/pil_simulation and remove vtf files from bee
+
+Re_N_noCoulomb_series01-localWarmup:
+local runs on chiru to create simulation checkpoints for N=10,20,...,100, lB=0 (coulomb interactions manually turned off), dist=1, sclen=0,1,2,3, rho=0.005 and Tmax=100
+
+Re_N_noCoulomb_series01-continue:
+continuation of local simulations on bee cluster with Tmax=15000
+
+Re_N_noCoulomb_series02:
+continuation of series01-continue simulations for additional 15000 time units
+
+Re_N_noCoulomb_series03:
+continuation of series02 with Tmax=60000
+
+ROD_Structure_series01:
+rod simulation with N=80, rho=0.005, lB=7.0, dist=1, sclen=[0,1,2,3]
+- equil: local warmup on chiru for Tmax=5000, no dist, rdf or formfac calculated
+- measure: continuation of local simulations on bee cluster with Tmax=55000, distr_iteration_interval=1, rdf_iteration_interval=1, formfactor_iteration_interval=10
+- measure02: continuation of series01 for Tmax=105000 (additional 50000 time units)
+
+ROD_Structure_series02:
+analog  to ROD_Structure_series01 with turned of coulomb interactions (lB=0)
+- equil: warmup, no analysis (dist, rdf, formfac), Tmax=5000
+- measure01: continuation with Tmax=55000, distr_iteration_interval=1, rdf_iteration_interval=1, formfactor_iteration_interval=10
+
+Comp_ROD_Structure_series01:
+analog to ROD_Structure_series01 with freely movable backbone
+- equil: local warmup (Tmax=5000)
+- measure: analog to ROD_Structure_series01-measure
+- measure02: continuation of series01 for Tmax=105000 (additional 50000 time units)
+
+Comp_ROD_Structure_series02:
+analog  to Comp_ROD_Structure_series01 with turned of coulomb interactions (lB=0)
+- equil: warmup, no analysis (dist, rdf, formfac), Tmax=5000
+- measure01: continuation with Tmax=55000, distr_iteration_interval=1, rdf_iteration_interval=1, formfactor_iteration_interval=10
+
+2016-04-14: Problem with tcl_precision=5 detected, comment out set tcl_precision (standard value)
+2016-04-18: Calculation of R_g,h was adjusted such that all pil-chain beads are taken into account
+
+
+
+
+
+
+
+
+### the results concerning the simulation runs from above are not taken into account in the evaluation part of the master's thesis ##################################
+
+
+
+
+ROD_Structure_series03:
+rod simulation with N=80, rho=0.005, lB=7.0, dist=1, sclen=[0,1,2,3] (identical with series01 except other tcl_precision and fixed Rgh calculation)
+- equil: local warmup on chiru for Tmax=5000, no dist, rdf or formfac calculated
+- measure01: continuation with Tmax=+50000, distr_iteration_interval=1, rdf_iteration_interval=1, formfactor_iteration_interval=10
+
+Comp_ROD_Structure_series03:
+analog to ROD_Structure_series03 with freely movable backbone (identical with series01 except other tcl_precision and fixed Rgh calculation)
+- equil: local warmup (Tmax=5000)
+- measure01: continuation with Tmax=+50000, distr_iteration_interval=1, rdf_iteration_interval=1, formfactor_iteration_interval=10
+
+ROD_Structure_series04:
+analog  to ROD_Structure_series03 with turned of coulomb interactions (lB=0)
+- equil: warmup, no analysis (dist, rdf, formfac), Tmax=5000
+- measure01: continuation with Tmax=+50000, distr_iteration_interval=1, rdf_iteration_interval=1, formfactor_iteration_interval=10
+
+Comp_ROD_Structure_series04:
+analog  to Comp_ROD_Structure_series03 with turned of coulomb interactions (lB=0)
+- equil: warmup, no analysis (dist, rdf, formfac), Tmax=5000
+- measure01: continuation with Tmax=+50000, distr_iteration_interval=1, rdf_iteration_interval=1, formfactor_iteration_interval=10
+
+Re_Nv2_series01:
+freely movable chain simulations for N=10,20,...,100, rho=0.005, lB=7.0, delta_s=0,1,2,3
+- equil: local (chiru) equilibration runs for Tmax = 5000, no measurements except R_e,g,h
+- measure01: continuation of local equil runs on bee for additional 25000 time units (Tmax=30000), calculation of rdf (interval=1), formfac (int=10), intCIdist (int=1, logflag set), structure_factor (int=10)
+- measure02: continuation of measure01 for additional 25000 time units (Tmax=55000)
+- measure03: continuation of measure02 for additional 50000 time units (Tmax=105000)
+
+Re_Nv2_series02:
+analog to series01 with turned off coulomb interactions (lB=0)
+- equil: local (chiru) equilibration runs
+- measure01: continuation on bee
+- measure02: continuation of measure01 for additional 25000 time units (Tmax=55000)
+- measure03: continuation of measure02 for additional 50000 time units (Tmax=105000)
+
+NVT_equi_dilute (not considered in evaluation):
+- EquilibrationForNPTRuns: N_P=30, MPC=30, delta_s=0,1,2,3, lB=7.0, rho=0.0140625 (corresponds to box_l=40 sigma), mpirun with n=4, first NVT equilibration for Tmax=3000 with no additional analysis, set up of denser system lead to broken bond errors that could not be fixed with reasonable minimizing the warmup timestep
+- NPTequi01: continuation of equilibration in the npt ensemble: NPTPressure=0.0036, Tmax=100000 (maximum time after which simulation is stopped, can stop earlier if averaged relative pressure error is below tolerance of 5%), mpirun with n=4, except for npt_info no further analysis
+
+NVT_equi_dilutev2 (not considered in evaluation):
+- NPTequi01: same as from NVT_equi_dilute-NPTequi01 except ncpus=16
+
+densePIL_BoxlRamp (not considered in evaluation):
+- postNPT: continuation of NVT_equi_dilutev2 in 'nvt' ensemble (boxlength is adjusted with 'ramp' to obtain target concentration which in turn corresponds to a volume fraction of 0.3. Tmax=130000 (addition 30000 time units), new vtf and analyze files, equi_temp=4.0 (for numerical stability, fene bonds break for 5.0), box_l_change_factor=0.0001
+-> it turned out that the monomer concentrations were calculated without the counterions. this leads to varying packing fractions (depending on deltaS)
+
+densePILv2:
+- diluteSetup: N_P=30, MPC=30, delta_s=0,1,2,3, lB=7.0, rho=0.0140625 (corresponds to box_l=40 sigma), equi_temp=1.0, Tmax=1000
+- diluteSetup02: equi_temp=2.0, Tmax=2000 (additional 1000 t.u.), same rho
+- diluteSetup03: equi_temp=3.0, Tmax=3000 (additional 1000 t.u.), same rho -> failed: broken bonds for EACH sclen -> restart with equi_temp=2.5 (sclen=2 failed at the first try, restart with different seed succeded)
+- diluteSetup04: equi_temp=2.75, Tmax=4000 (additional 1000 t.u.), same rho -> sclen=0 failed at first try, restart with different seed succeded, because of missing checkpoint at T=3000, trajectory and analysis between 3000 and 3250 missing (used old subcheckpoint 3250)
+- diluteSetup05: equi_temp=3.0, Tmax=5000, same rho -> failed: broken bonds for EACH sclen at first try -> restart with different seeds (sclen=3 took 2 additional tries)
+- diluteSetup06: equi_temp=3.0, Tmax=8000, same rho (additional 3000 time units at same temperature as a test of numerical stability)
+- postDilute: continuation of diluteSetup02 with equi_temp=2.0, Tmax=200000 (additional 198000 t.u.), target rhos to achieve phi=0.3,  box_l_change_factor=0.0001, retune p3m every 1000 iterations (sclen0,1,3: MPI error: message truncated, sclen2: timeout) -> MPI error occur only when boxvolume is changed (p3m grid not changed? domain decomposition not changed?)
+- postDilute02: continuation of postDilute with equi_temp=2.0, Tmax=200000, target rhos to achieve phi=0.3, box_l_change_factor=0.0001, retune p3m every 250 iterations
+
+densePIL_BoxlRamp02:
+- postNPT: continuation of NVT_equi_dilutev2 in 'nvt' ensemble (boxlength is adjusted with 'ramp' to obtain target concentration which in turn corresponds to a volume fraction of 0.3. Tmax=200000 (addition 100000 time units), new vtf and analyze files, equi_temp=2.0, box_l_change_factor=0.0001, retune p3m every 1000 iterations, continuation of sclen3 (timeout) and sclen0 (MPI error: message truncated) -> restarted sclen0 from last checkpoint (failed again with mpi error), restarted with reduced p3m tune interval 250
+-> it turned out that the monomer concentrations were calculated without the counterions. this leads to varying packing fractions
+ (depending on deltaS)
+
+densePIL_eta0.3_v01:
+- changeVolume: ramp to target packing fraction 0.3 (this time with consideration of the counterions), used last checkpoint from densePIL_BoxlRamp02, stop after target eta
+- measure01: equilibration runs unitl Tmax=250000 (approx 50000 additional time units) with rdf export (timeout for sclen=3), created subfolders 'densePIL_eta0.3_v01_measure01-failed-sclen3' for old (failed) simulation
+- measure01_sclen3: repeat sclen3 simulation (previously failed rdf export), export all rdf values, Tmax=25000 (approx. 25000 additional timesteps), 16 cpus, temp=2.0
+- measure01-2_sclen3: second part of sclen3 simulation with export of all rdf values, Tmax=250000 (additional 25000 timesteps), 16 cpus, temp=2.0
+- measure02: rdf export (all data) until Tmax=275000, temp=2.0 (job ids 140719-22)
+
+densePIL_eta0.3_v02:
+- changeVolume: ramp to target packing fraction 0.3 (this time with consideration of the counterions), used last checkpoint from densePILv2, stop after target eta
+- sclen3equil: further equilibration to Tmax=200000 for better comparison with other runs (and series), no analysis
+- measure01: rdf export (all data) until Tmax=230000, temp=2.0
+- measure02: rdf export (all data) until Tmax=260000, temp=2.0
+- measure03: rdf export (all data) unitl Tmax=290000, temp=2.0
+- coolDown01: temp=1.0, rdf and coordinate export until Tmax=300000 (new vtf and analysis files)
+### moved measure04-07 in densePIL_eta0.3_v02_T1.0_measure04-07/ subfolders (analyze, vtf, checkpointing) ###
+- measure04: rdf export (all data) until Tmax=325000, temp=1.0 (new vtf and analysis files)
+- measure05: rdf export (all data) until Tmax=350000, temp=1.0 (ncpus=8, previously 16), sclen3 timeout -> trimmed vtf and continued from last checkpoint
+- measure06: rdf export (all data) until Tmax=375000, temp=1.0 (ncpus=16, changed back)
+- measure07: rdf export (all data) until Tmax=400000, temp=1.0 (ncpus=16 unchanged)
+#############################################################################################################
+- measure04T2.0: continuation of measure03, rdf export (all data) until Tmax=300000, temp=2.0, used old measure03 vtf and analyze files
+- coords01: continuation of measure04T2.0, coordinate export, no rdf export, Tmax=350000
+- coords02: Tmax=400000, only coordinate export
+(trim frames, export last 50000 frames for msd analysis: sclen0:147402-197401, sclen1:148554-198553, sclen2:148995-198994, sclen3:150001-200000)
+
+densePIL_eta0.3_v03:
+- diluteSetup: NVT setup with rho_m=0.0140625 (boxlength=40 sigma), equi_temp=1, Tmax=2000, manually set rng seeds, initial problems of broken bonds for sclen=0 solved with greater shield radius (.35 sigma)
+- additional dilute equilibration until  Tmax=100000, wrongly named 'measure01', better description: 'diluteEqui'
+- changeVolume: boxlen ramp to eta=0.3, stop after target density is reached
+- measure01n: rdf export (all data) until Tmax=125000 (approx 20000 additional timesteps)
+- measure02: rdf export (all data) until Tmax=150000 (25000 additional timesteps)
+- measure03: rdf export (all data) until Tmax=175000 (25000 additional timesteps)
+
+densePIL_eta0.3_WCA (not considered in evaluation):
+- diluteSetup: NVT setup with rho_m=0.0140625 (boxlength=40 sigma), equi_temp=2, Tmax=2000, no attractive LJ part, WCA only
+- changeVolume: boxlen ramp to eta=0.3, no stop after target density, Tmax=10000
+- denseEqui01: further equilibration at eta=0.3, Tmax=200000, temp=2.0
+- measure01: rdf export (all data) until Tmax=225000, temp=2.0, coordinate export
+- measure02: rdf export (all data) until Tmax=250000, temp=2.0, coordinate export
+- measure03: rdf export (all data) until Tmax=275000, temp=2.0, coordinate export (ncpus=8, previously 16)
+- measure04: rdf export (all data) until Tmax=290000, temp=2.0, coordinate export
+- measure05: rdf export (all data) until Tmax=300000, temp=2.0, coordinate export
+- coords01: Tmax=325000, temp=2.0, coordinate export (no rdf export, ncpus=16, previously 8)
+- coords02: Tmax=400000, temp=2.0, coordinate export (ncpus left unchanged)
+
+densePIL_eta0.3_WCA_T1.0 (not considered in evaluation):
+- coolDown01: temp=1.0, rdf and coordinate export until Tmax=300000 (continuation of densePIL_eta0.3_WCA measure04 with new vtf and analysis files)
+- measure01: rdf export (all data) until Tmax=325000, temp=1.0 (new vtf and analysis files, ncpus=16, previously 8)
+- measure02: rdf export (all data) until Tmax=350000, temp=1.0
+- measure03: rdf export (all data) until Tmax=375000, temp=1.0
+
+densePIL_eta0.3_extForce:
+used checkpoint from densePIL_eta0.3_v02 at Tmax=400000, temp=2.0, eta=0.3, applied external force q*0.05 on (charged) particles
+- measure01: coordinate and velocity until Tmax=425000
+- measure02: coordinate and velocity until Tmax=475000
+- measure03: coordinate and velocity until Tmax=525000
+- measure04: coordinate and velocity until Tmax=575000
+- measure05: coordinate and velocity until Tmax=600000
+
+densePIL_eta0.3_WCA-extForce:
+used checkpoint from densePIL_eta_WCA at Tmax=400000, temp=2.0, eta=0.3, applied external force q*0.05 on (charged) particles
+- measure01: coordinate and velocity until Tmax=450000
+- measure02: coordinate and velocity until Tmax=500000
+- measure03: coordinate and velocity until Tmax=550000
+- measure04: coordinate and velocity until Tmax=600000
+
+densePIL_eta0.3_wall: (not considered in evaluation) (### no elc method applied ###)
+full pbc box, periodicity restrained in xy with two wall constraints, temp=2.0
+- diluteSetup: NVT setup with rho_m=0.0140625 with introduced wall constraints, Tmax=1000
+- changeVolume: boxlen ramp to eta=0.3, do not stop when target density is reached but simulate until Tmax=25000, coordinate export (for debug), multiple restarts from last checkpoints for all simulations (mpi error after retune), partially changed tune interval to 200 timesteps
+- denseEqui01: further equilibration until Tmax=100000, no coordinate or velocity export, no detailed analysis
+- extForceEqui01: apply external forces (externalElField=0.05), run until Tmax=150000, no coordinate or velocity export, no detailed analysis
+- extForceEqui02: continuation until Tmax=200000, no coordinate or velocity export, no detailed analysis
+- measure01: coordinate and velocity until Tmax=250000
+- measure02: coordinate and velocity until Tmax=300000
+- measure03: coordinate and velocity until Tmax=350000
+- measure04: coordinate and velocity until Tmax=400000
+
+densePIL_eta0.3_wall-attrLJ: (not considered in evaluation) (### no elc method applied ###)
+full pbc box, periodicity restrained in xy with two wall constraints, WCA wall-CI, attrLJ wall-chain, temp=2.0, used checkpoint from densePIL_eta0.3_wall after denseEqui01 (starting at T=100000)
+- extForceEqui01: further equilibration from densePIL-eta0.3_wall(denseEqui01) checkpoint, apply external forces (externalElField=0.05), run until Tmax=150000, no coordinate or velocity export, no detailed analysis
+- extForceEqui02: continuation until Tmax=200000, no coordinate or velocity export, no detailed analysis
+- measure01: coordinate and velocity until Tmax=250000
+- measure02: coordinate and velocity until Tmax=300000
+- measure03: coordinate and velocity until Tmax=350000
+- measure04: coordinate and velocity until Tmax=400000
+
+densePIL_eta0.3_elc-wall:
+same as densePIL_eta0.3_wall with additional applied elc method (gap size: 20%), used checkpoint from densePIL_eta0.3_wall after denseEqui01 (starting at T=100000)
+- extForceEqui01: further equilibration, elc applied for first time, run until Tmax=150000, no coordinate or velocity export, no detailed analysis
+- extForceEqui02: continuation until Tmax=200000, no coordinate or velocity export, no detailed analysis
+- measure01: coordinate and velocity until Tmax=250000
+- measure02: coordinate and velocity until Tmax=300000
+- measure03: coordinate and velocity until Tmax=350000
+- measure04: coordinate and velocity until Tmax=400000
+
+densePIL_eta0.3_elc-wall-attrLJ:
+same as densePIL_eta0.3_wall-attrLJ with additional applied elc method (gap size: 20%), used checkpoint from densePIL_eta0.3_wall after denseEqui01 (starting at T=100000)
+- extForceEqui01: further equilibration, elc applied for first time, run until Tmax=150000, no coordinate or velocity export, no detailed analysis
+- extForceEqui02: continuation until Tmax=200000, no coordinate or velocity export, no detailed analysis
+- measure01: coordinate and velocity until Tmax=250000
+- measure02: coordinate and velocity until Tmax=300000
+- measure03: coordinate and velocity until Tmax=350000
+- measure04: coordinate and velocity until Tmax=400000
+
+densePIL_eta0.3_elc-wall-charged:
+same as densePI_eta0.3_elc-wall with additional charged wall (wall_charge_density = 0.05), 'charge' wall at z=0 by applying external force in z-direction to all charged particles, used checkpoint from densePIL_eta0.3_wall after denseEqui01 (starting at T=100000)
+- extForceEqui01: further equilibration, elc applied for first time, run until Tmax=150000, no coordinate or velocity export, no detailed analysis
+- extForceEqui02: continuation until Tmax=200000, no coordinate or velocity export, no detailed analysis
+- measure01: coordinate and velocity until Tmax=250000
+- measure02: coordinate and velocity until Tmax=300000
+- measure03: coordinate and velocity until Tmax=350000
+- measure04: coordinate and velocity until Tmax=400000
