@@ -1,10 +1,6 @@
 #!/usr/bin/python
-"""This script calculates the sum as a function of t in eq. 5 from doi:10.1021/jp501075g in order to get the (ionic) conductivity and the uncorrelated (ionic) conductivity. 
-Tau is given in frame distances (for current simulation data this corresponds to 1 simulation time unit)"""
+"""Simplified version of calculateSigmaSumMulticore.py for the uncorrelated conductivity"""
 
-#sum_{i,j} z_i z_j <[\vec{R_i}(t+t0) - \vec{R_i}(t0)] \cdot [\vec{R_j}(t+t0) - \vec{R_j}(t0)]>_t0
-#i,j: particles
-#z_i: valency of particle i (e.g. 1, -1 or 0)
 
 import numpy as np
 import sys, os.path, pickle
